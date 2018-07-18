@@ -1,0 +1,7 @@
+{
+	"entry": "./src/index.js",
+	"host": "localhost",
+	"port": 8090,
+	"template": "./src/index.html",
+	"devtool": "source-map"
+}

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width;initial-scale=1">
+	<title><%= htmlWebpackPlugin.options.title %></title>
+	<!-- <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
+</head>
+<body>
+	<!-- <div id="box"></div><br><br><br><br><br><br> -->
+	<!-- <div id="root"></div>
+	<div id="less-id">
+		
+	</div> -->
+	<div id="div1" class="drag" style="left: 0;">
+		div1
+	</div>
+	<div id="div2" class="drag" style="right: 0;">
+		div2
+	</div>
+	<script type="text/javascript">
+		// function * show () {
+		// 	yield 'welcome';
+		// 	yield 'to';
+		// 	return 'beijing';
+		// }
+
+		// let s = show();
+		// console.log(s);
+		// console.log(s.next());
+		// console.log(s.next());
+		// console.log(s.next());
+
+		// for (value of s) {
+		// 	console.log(value);
+		// }
+
+		// let [a, b] = show();
+		// console.log(a, b);
+		// let [a, ...b] = show();
+		// console.log(a, b);
+
+		// function * gen () {
+		// 	let val  = yield 'wuyongjun';
+		// 	yield axios.get(`https://api.github.com/users/${val}`);
+		// };
+
+		// let g = gen();
+
+		// let username = g.next().value;
+		// console.log(username);
+
+		// console.log(g.next(username).value);
+		// g.next(username).value.then((res) => {
+		// 	console.log(res);
+		// });
+
+		async function fn () {
+			throw new Error('出错了');
+		}
+		fn().then(res => {
+			// console.log(res);
+		}, err => {
+			// console.log(err);
+		})
+
+		let set = new Set([2, 3, 4]);
+		set = new Set([...set].map(value=>value*2));
+		// console.log(set);
+
+		let date = '2018-07-11';
+		let reg = /^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})$/;
+		// console.log(date.match(reg).groups);
+		let date1 = date.replace(reg, '$<day>/$<month>/$<year>');
+		// console.log(date1);
+		let str = date.replace(reg, (...args) => {
+			let {year, month, day} = args[args.length -1];
+			return `${day}/${month}/${year}`;
+		});
+		// console.log(str);
+		// console.log(reg.test(date));
+
+		let obj = {
+			name: 'liusihan'	
+		};
+		let proxy = new Proxy(obj, {
+			// 注意: 代理对象的handler会拦截对对象的操作，所以get中一定要有return 
+			get (target, property) {
+				if (property in target) {
+					return target[property];
+				} else {
+					throw ReferenceError(`您访问的属性${property}不在对象上。`);
+				}
+			}
+		})
+		// console.log(proxy.name);
+		// console.log(proxy.aaa);
+		
+		// 不明确target对象先传入空json对象
+		const DOM = new Proxy({}, {
+			get (target, property) {
+				// target.property target---DOM property---div
+				return (attrs = {}, ...children) => {
+					// 创建一个元素
+					let el = document.createElement(property);
+					// 给元素添加属性，循环json对象
+					for (let key of Object.keys(attrs)) {
+						el.setAttribute(key, attrs[key]);
+					}
+					// 给元素添加子元素
+					for (let child of children) {
+						// 如果参数是字符串，那么创建一个文本节点，否则直接添加到元素中
+						if (typeof child === 'string') 
+							child = document.createTextNode(child);
+						el.appendChild(child);
+					}
+					return el;
+				};
+			}
+		});
+		
+		// 通过proxy创建元素, div(attrs, children)
+		let oDiv = DOM.div({ id: 'div1', class: 'demo' }, '我是通过proxy方式创建的',
+			DOM.a({ href: 'http://www.51mmr.net' }, '访问牧码人学习官网'),
+			DOM.ul({ id: 'ul' },
+				DOM.li({ class: 'li' }, '11111111')
+			)
+		);
+		console.log(oDiv);
+
+		let proxyObj = new Proxy({}, {
+			set (target, prop, value) {
+				console.log(prop);
+				if (prop === 'age') {
+					if (!Number.isInteger(value)) {
+						throw new TypeError(`${prop}必须为整数。`);
+					}
+					if (value > 200) {
+						throw new RangeError(`${prop}不能超过200。`);
+					}
+				}
+				target[prop] = value
+			}
+		});
+
+		proxyObj.name = 'Strive';
+		proxyObj.age = 18;
+		console.log(proxyObj);
+		
+		let json = {
+			a: 1,
+			b: 2
+		};
+		
+		let newJson = new Proxy(json, {
+			deleteProperty (target, property) {
+				console.warn(`您正在删除${JSON.stringify(target)}对象的${property}属性！`);
+				delete target[property];
+			},
+			has (target, property) {
+				return property in target;
+			}
+		});
+		console.log('a' in newJson);
+		delete newJson.b;
+		console.log(json);
+
+		let sum = (a, b) => {
+			return a + b;
+		};
+		
+		let newSum = new Proxy(sum, {
+			apply (target, context, args) {
+				console.log(target, context, args);
+				console.log(...arguments);
+				return Reflect.apply(...[target, context, args]);
+			}
+		});
+
+		console.log(newSum(2, 4));
+		console.log(Reflect.apply(Math.ceil, null, [14.5]));
+		let show1 = (...args) => {
+			console.log(this);
+			console.log(args);
+		};
+		show1();
+		show1.call('abc', 1, 2, 3);
+		show1.apply('abc', [1, 2, 3]);
+	</script>
+</body>
+</html>

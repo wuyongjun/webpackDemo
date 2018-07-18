@@ -1,0 +1,29 @@
+body {
+    /*background: #cccccc;*/
+    /*background: url("../images/bd_logo1.png") top right repeat-y;*/
+}
+#root {
+    width: 500px;
+    height: 100px;
+    /*border: 1px solid red;*/
+    line-height: 100px;
+    text-align: center;
+    transform: rotate(45deg);
+}
+.a {
+    color: #000;
+}
+table {
+    width: 100px;
+    height: 100px;
+}
+span {
+    border: 1px solid black;
+}
+.drag {
+    width: 100px;
+    height: 100px;
+    background: pink;
+    position: absolute;
+    top: 0;
+}
